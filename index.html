@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Canada Job Portal</title>
+<style>
+:root{--ink:#17222d;--mute:#5d6b78;--paper:#f3f5f4;--card:#fff;--line:#d9dfdc;--pine:#1d5a4a;--pine-d:#14423a;--maple:#b4372b;--amber:#b7791f;--new:#e8f3ef;--r:6px}
+@media (prefers-color-scheme:dark){:root{--ink:#e7ecea;--mute:#9aa8a3;--paper:#11181a;--card:#182124;--line:#2a373a;--pine:#5fb59d;--pine-d:#7fcfb8;--maple:#e8776b;--amber:#e0a84a;--new:#1c2e2a}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+h1,h2,h3{font-family:Georgia,"Times New Roman",serif;margin:0;font-weight:700}
+button,input,select,textarea{font:inherit;color:inherit}
+input,select,textarea{width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:var(--r);background:var(--card)}
+textarea{min-height:70px;resize:vertical}
+label{display:block;font-size:13px;color:var(--mute);margin:10px 0 3px}
+button{cursor:pointer;border:1px solid var(--line);background:var(--card);padding:7px 12px;border-radius:var(--r)}
+button.pri{background:var(--pine);border-color:var(--pine);color:#fff}
+button.pri:hover{background:var(--pine-d)}
+button.sm{padding:3px 8px;font-size:13px}
+:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+a{color:var(--pine)}
+header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:3px solid var(--maple);background:var(--card)}
+header .acts{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+header select{width:auto}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border-bottom:1px solid var(--line)}
+.stats div{background:var(--card);padding:10px 20px}
+.stats b{display:block;font:700 24px Georgia,serif}
+.stats span{font-size:13px;color:var(--mute)}
+.layout{display:grid;grid-template-columns:310px 1fr;gap:20px;padding:20px;max-width:1300px;margin:auto}
+aside,.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px}
+aside h2{font-size:17px;margin-bottom:6px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:14px;flex-wrap:wrap}
+.tabs button{border:0;border-bottom:3px solid transparent;border-radius:0;background:none}
+.tabs button[aria-selected=true]{border-color:var(--pine);font-weight:700}
+.ss{display:flex;gap:4px;align-items:center;padding:4px 0}
+.ss button.n{flex:1;text-align:left;border:0;background:none;padding:4px 6px;border-radius:var(--r)}
+.ss.on button.n{background:var(--new);font-weight:700}
+.status{padding:10px 12px;border-radius:var(--r);border:1px solid var(--line);margin-bottom:12px;font-size:14px}
+.status.err{border-color:var(--maple)}
+.status.ok{border-color:var(--pine)}
+.card{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--line);border-radius:var(--r);padding:12px 14px;margin-bottom:10px;cursor:pointer}
+.card.new{border-left-color:var(--pine);background:var(--new)}
+.card h3{font-size:17px}
+.meta{font-size:13px;color:var(--mute);display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:3px}
+.badge{display:inline-block;font-size:12px;border:1px solid var(--line);padding:0 6px;border-radius:10px;margin-left:6px;vertical-align:middle}
+.score{float:right;text-align:right;font-size:12px;color:var(--mute)}
+.score b{display:block;font:700 22px Georgia,serif;color:var(--pine)}
+.detail{border:1px solid var(--pine);border-radius:var(--r);padding:16px;margin-bottom:14px;background:var(--card)}
+.detail pre{white-space:pre-wrap;font:inherit;max-height:260px;overflow:auto;border:1px solid var(--line);padding:8px;border-radius:var(--r)}
+.chips span{display:inline-block;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:0 8px;margin:2px;font-size:13px}
+.links a{display:inline-block;margin:3px 10px 3px 0}
+.empty{padding:28px;text-align:center;color:var(--mute);border:1px dashed var(--line);border-radius:var(--r)}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid var(--line);border-top-color:var(--pine);border-radius:50%;animation:s 1s linear infinite;vertical-align:middle}
+@keyframes s{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.spin{animation:none}}
+.hide{display:none}
+@media (max-width:820px){.layout{grid-template-columns:1fr;padding:12px}.stats{grid-template-columns:1fr 1fr}.stats div{padding:8px 12px}.score{float:none;text-align:left;margin-bottom:4px}}
+</style>
+</head>
+<body>
+<header>
+  <div><h1>Canada Job Portal</h1><div class="meta" id="lastRefresh">Not refreshed yet</div></div>
+  <div class="acts">
+    <label for="auto" style="margin:0">Auto-refresh</label>
+    <select id="auto" aria-label="Auto-refresh interval"><option value="0">Off</option><option value="15">15 min</option><option value="30">30 min</option></select>
+    <button class="pri" id="refresh">Refresh jobs</button>
+  </div>
+</header>
+<section class="stats" aria-label="Dashboard">
+  <div><b id="stRet">0</b><span>Jobs retrieved</span></div>
+  <div><b id="stNew">0</b><span>New this refresh</span></div>
+  <div><b id="stSaved">0</b><span>Saved jobs</span></div>
+  <div><b id="stApp">0</b><span>Applications tracked</span></div>
+</section>
+<div class="layout">
+<aside>
+  <h2>Saved searches</h2>
+  <div id="ssList"></div>
+  <div style="display:flex;gap:6px;margin-top:6px"><button class="sm" id="ssAdd">Add</button><button class="sm" id="ssSave">Save changes</button></div>
+  <h2 style="margin-top:18px">Filters</h2>
+  <label for="fKw">Keywords (comma-separated)</label><input id="fKw" placeholder="support analyst, helpdesk">
+  <label for="fEx">Exclude terms</label><input id="fEx" placeholder="senior, qa, tester">
+  <label for="fLoc">Location</label><input id="fLoc" placeholder="Mississauga, ON or Canada">
+  <label for="fCo">Company</label><input id="fCo">
+  <div class="row">
+    <div><label for="fMode">Work arrangement</label><select id="fMode"><option value="">Any</option><option>Remote</option><option>Hybrid</option><option>On-site</option></select></div>
+    <div><label for="fType">Employment type</label><select id="fType"><option value="">Any</option><option>Full-time</option><option>Part-time</option><option>Contract</option><option>Temporary</option><option>Internship</option><option>Casual</option></select></div>
+    <div><label for="fMin">Min salary</label><input id="fMin" type="number" min="0"></div>
+    <div><label for="fMax">Max salary</label><input id="fMax" type="number" min="0"></div>
+    <div><label for="fPosted">Date posted</label><select id="fPosted"><option value="">Any</option><option value="1">24 hours</option><option value="3">3 days</option><option value="7">7 days</option><option value="14">14 days</option><option value="30">30 days</option></select></div>
+    <div><label for="fLevel">Experience</label><select id="fLevel"><option value="">Any</option><option>Entry-level</option><option>Junior</option><option>Intermediate</option><option>Senior</option></select></div>
+  </div>
+  <label for="fSource">Job source</label><select id="fSource"><option value="">All</option></select>
+  <label for="fSort">Sort by</label><select id="fSort"><option value="match">Best match</option><option value="new">Newest</option><option value="salary">Salary (where published)</option></select>
+</aside>
+<main>
+  <div class="tabs" role="tablist" id="tabs">
+    <button role="tab" aria-selected="true" data-t="results">Results</button>
+    <button role="tab" aria-selected="false" data-t="tracker">Saved &amp; tracker</button>
+    <button role="tab" aria-selected="false" data-t="profile">My profile</button>
+    <button role="tab" aria-selected="false" data-t="settings">Settings &amp; data</button>
+  </div>
+  <div id="t-results">
+    <div id="srcStatus"></div>
+    <div class="panel" style="margin-bottom:14px"><b>Search outside this portal</b>
+      <div class="links" id="extLinks"></div>
+      <div class="meta">LinkedIn has no public job-data API. These links open LinkedIn's own search with your filters. They are searches, not imported listings.</div></div>
+    <div id="detail"></div>
+    <div id="list"></div>
+    <div style="text-align:center"><button id="more" class="hide">Load more</button></div>
+  </div>
+  <div id="t-tracker" class="hide"><div style="margin-bottom:10px"><button id="expTrk">Export tracker (CSV)</button></div><div id="trkList"></div></div>
+  <div id="t-profile" class="hide panel">
+    <h2>Candidate profile</h2>
+    <p class="meta">Used only in this browser to estimate how well a posting fits. Edit anything.</p>
+    <label for="pSum">Summary</label><textarea id="pSum"></textarea>
+    <label for="pSkills">Skills (comma-separated)</label><textarea id="pSkills"></textarea>
+    <label for="pTitles">Preferred job titles</label><textarea id="pTitles"></textarea>
+    <label for="pExcl">Excluded categories / terms</label><textarea id="pExcl"></textarea>
+    <p><button class="pri" id="pSave">Save profile</button></p>
+  </div>
+  <div id="t-settings" class="hide panel">
+    <h2>Settings &amp; data</h2>
+    <label for="sUrl">Job proxy URL (added in Stage 2)</label><input id="sUrl" placeholder="https://your-worker.your-name.workers.dev">
+    <p class="meta">Leave empty until the proxy exists. API keys never go in this page.</p>
+    <label><input type="checkbox" id="sNotif" style="width:auto"> Browser notifications for new jobs (only while this page is open)</label>
+    <p><button id="sSave" class="pri">Save settings</button></p>
+    <h3 style="margin-top:18px">Backup</h3>
+    <p class="meta">Everything is stored in this browser. Export a backup before clearing browser data or switching devices.</p>
+    <button id="bkExp">Export backup (JSON)</button> <button id="bkImp">Import backup</button>
+    <input type="file" id="bkFile" accept=".json" class="hide">
+    <p><button id="exRes">Export current results (CSV)</button></p>
+    <p class="meta">Background monitoring and email alerts are not implemented. They need a scheduled server job, which is a later optional stage.</p>
+  </div>
+</main>
+</div>
+<script>
+'use strict';
+const KEY='jobportal.v1', $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const STATUSES=['Not Applied','Applied','Interview','Rejected','Offer'];
+const mk=(name,keywords,level)=>({id:'s'+name.replace(/\W/g,'').slice(0,12),name,keywords,exclude:'',location:'Mississauga, ON',mode:'',type:'',posted:'',level:level||''});
+const DEFAULTS={
+ profile:{summary:'Based in Mississauga, Ontario. 7+ years of manual software testing experience, followed by a career break. Returning to the Canadian workforce.',
+  skills:'manual testing, test cases, defect tracking, bug reporting, SQL basics, documentation, requirements analysis, user acceptance testing, Excel, reporting, troubleshooting, communication',
+  titles:'No-code developer, application support analyst, IT support, reporting analyst, business systems analyst, AI data specialist, data annotator, administrative assistant, operations coordinator',
+  excludes:'senior, manager, director, python developer, qa engineer, tester, sdet'},
+ searches:[
+  mk('No-Code / Low-Code Developer','no-code, low-code, power apps, power automate, airtable, zapier'),
+  mk('Junior Application Support Analyst','application support analyst, application support specialist','Junior'),
+  mk('IT Support / Technical Support','it support, technical support, help desk, service desk','Entry-level'),
+  mk('Data Analyst Assistant / Reporting','data analyst, reporting analyst, data assistant','Entry-level'),
+  mk('Junior Business Systems Analyst','business systems analyst, business analyst, systems analyst','Junior'),
+  mk('AI Operations / AI Data Specialist','ai operations, ai data specialist, ai specialist'),
+  mk('AI Trainer / Data Annotator','ai trainer, data annotator, data annotation, ai tutor'),
+  mk('Administrative Assistant / Office Admin','administrative assistant, office administrator, receptionist','Entry-level'),
+  mk('Operations / Data Coordinator','operations coordinator, data coordinator, data entry'),
+  mk('Career returner tech roles','returnship, career re-entry, return to work, trainee, associate','Entry-level')],
+ jobs:{},newIds:[],tracker:{},settings:{workerUrl:'',auto:0,notif:false,lastRefresh:null,sources:{}},activeSearch:null};
+let S=load(), timer=null, page=1, sel=null, results=[];
+function load(){try{const r=JSON.parse(localStorage.getItem(KEY));if(r&&r.profile)return Object.assign(structuredClone(DEFAULTS),r)}catch(e){}return structuredClone(DEFAULTS)}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){toast('Could not save: browser storage is full or blocked. Export a backup.')}}
+function toast(m){const d=document.createElement('div');d.className='status err';d.setAttribute('role','alert');d.textContent=m;$('#srcStatus').prepend(d);setTimeout(()=>d.remove(),6000)}
+const csv=r=>r.map(x=>x.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\n');
+function dl(name,text,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)}
+const fmt=d=>d?new Date(d).toLocaleString('en-CA',{dateStyle:'medium',timeStyle:'short'}):'unknown';
+
+/* ---------- saved searches & filters ---------- */
+const F={kw:'#fKw',ex:'#fEx',loc:'#fLoc',co:'#fCo',mode:'#fMode',type:'#fType',min:'#fMin',max:'#fMax',posted:'#fPosted',level:'#fLevel',source:'#fSource',sort:'#fSort'};
+const getF=()=>Object.fromEntries(Object.entries(F).map(([k,s])=>[k,$(s).value.trim()]));
+function setF(s){$('#fKw').value=s.keywords;$('#fEx').value=s.exclude;$('#fLoc').value=s.location;$('#fMode').value=s.mode;$('#fType').value=s.type;$('#fPosted').value=s.posted;$('#fLevel').value=s.level}
+function renderSearches(){
+ $('#ssList').innerHTML=S.searches.map(s=>`<div class="ss ${s.id===S.activeSearch?'on':''}"><button class="n" data-id="${s.id}">${esc(s.name)}</button><button class="sm" data-ren="${s.id}" aria-label="Rename ${esc(s.name)}">Rename</button><button class="sm" data-del="${s.id}" aria-label="Delete ${esc(s.name)}">×</button></div>`).join('')||'<div class="meta">No saved searches.</div>'}
+$('#ssList').onclick=e=>{const b=e.target;
+ if(b.dataset.id){S.activeSearch=b.dataset.id;setF(S.searches.find(s=>s.id===b.dataset.id));save();renderSearches();apply()}
+ if(b.dataset.ren){const s=S.searches.find(x=>x.id===b.dataset.ren),n=prompt('Rename search',s.name);if(n){s.name=n.trim();save();renderSearches()}}
+ if(b.dataset.del){const s=S.searches.find(x=>x.id===b.dataset.del);if(confirm('Delete "'+s.name+'"?')){S.searches=S.searches.filter(x=>x!==s);if(S.activeSearch===s.id)S.activeSearch=null;save();renderSearches()}}};
+$('#ssAdd').onclick=()=>{const n=prompt('Name for the new search (uses the current filters)');if(!n)return;const f=getF();S.searches.push({id:'s'+Date.now(),name:n.trim(),keywords:f.kw,exclude:f.ex,location:f.loc,mode:f.mode,type:f.type,posted:f.posted,level:f.level});S.activeSearch=S.searches.at(-1).id;save();renderSearches()};
+$('#ssSave').onclick=()=>{const s=S.searches.find(x=>x.id===S.activeSearch);if(!s)return toast('Select a saved search first, or use Add.');const f=getF();Object.assign(s,{keywords:f.kw,exclude:f.ex,location:f.loc,mode:f.mode,type:f.type,posted:f.posted,level:f.level});save();toast('Search updated.')};
+Object.values(F).forEach(s=>$(s).addEventListener('input',()=>{page=1;apply()}));
+
+/* ---------- external search links (no scraping) ---------- */
+function extLinks(){const f=getF(),terms=f.kw.split(',').map(s=>s.trim()).filter(Boolean),loc=f.loc||'Canada';
+ const p=new URLSearchParams({keywords:terms.map(t=>`"${t}"`).join(' OR ')||'jobs',location:/canada/i.test(loc)?loc:loc+', Canada'});
+ const tpr={1:86400,3:259200,7:604800,14:1209600,30:2592000}[f.posted];if(tpr)p.set('f_TPR','r'+tpr);
+ const wt={'On-site':1,Remote:2,Hybrid:3}[f.mode];if(wt)p.set('f_WT',wt);
+ const jt={'Full-time':'F','Part-time':'P',Contract:'C',Temporary:'T',Internship:'I'}[f.type];if(jt)p.set('f_JT',jt);
+ const lv={'Entry-level':'1,2',Junior:'2',Intermediate:'3,4',Senior:'4,5'}[f.level];if(lv)p.set('f_E',lv);
+ if(f.sort==='new')p.set('sortBy','DD');
+ const jb=new URLSearchParams({searchstring:terms.join(' ')||'',locationstring:loc});
+ $('#extLinks').innerHTML=`<a href="https://www.linkedin.com/jobs/search/?${esc(p)}" target="_blank" rel="noopener noreferrer">LinkedIn Jobs search</a><a href="https://www.jobbank.gc.ca/jobsearch/jobsearch?${esc(jb)}" target="_blank" rel="noopener noreferrer">Job Bank (Government of Canada) search</a>`}
+
+/* ---------- retrieval ---------- */
+const keyOf=j=>j.id?j.source+':'+j.id:j.url?j.url.split('?')[0].toLowerCase():[j.title,j.company,j.location].join('|').toLowerCase();
+async function refresh(){
+ const btn=$('#refresh');const url=S.settings.workerUrl.replace(/\/$/,'');
+ if(!url){S.settings.sources={};showStatus([{name:'Live job sources',ok:false,msg:'Not connected. Live retrieval needs the free job proxy from Stage 2. Until then, use the LinkedIn and Job Bank search links below.'}]);return}
+ btn.disabled=true;$('#srcStatus').innerHTML='<div class="status"><span class="spin"></span> Retrieving jobs…</div>';
+ const f=getF(),q=new URLSearchParams({q:f.kw,l:f.loc||'Canada'});const st=[];
+ try{
+  const r=await fetch(url+'/jobs?'+q,{headers:{Accept:'application/json'}});
+  if(r.status===429)throw new Error('The source is rate-limited. Try again later.');
+  if(!r.ok)throw new Error('Proxy returned HTTP '+r.status);
+  const d=await r.json();const now=new Date().toISOString();let added=[];
+  for(const j of d.jobs||[]){const k=keyOf(j);if(!S.jobs[k]){added.push(k);S.jobs[k]={...j,key:k,retrieved:now}}else Object.assign(S.jobs[k],j,{key:k,retrieved:now,first:S.jobs[k].first})}
+  Object.values(S.jobs).forEach(j=>j.first=j.first||now);
+  if(added.length)S.newIds=added;
+  for(const s of d.sources||[])st.push({name:s.name,ok:s.ok,msg:s.ok?`Retrieved ${s.count??''} listings`:(s.error||'Unavailable')});
+  if(!st.length)st.push({name:'Proxy',ok:true,msg:(d.jobs||[]).length?'OK':'Connected, but no jobs returned for this search.'});
+  S.settings.lastRefresh=now;
+  const keys=Object.keys(S.jobs);if(keys.length>600){keys.sort((a,b)=>S.jobs[a].retrieved<S.jobs[b].retrieved?-1:1).slice(0,keys.length-600).forEach(k=>delete S.jobs[k])}
+  if(added.length&&S.settings.notif&&Notification.permission==='granted')new Notification(added.length+' new job(s) found');
+ }catch(e){st.push({name:'Proxy',ok:false,msg:(e.message==='Failed to fetch'?'Network error or blocked by CORS. Check the proxy URL.':e.message)+' Showing previously retrieved results, labelled with their retrieval time.'})}
+ btn.disabled=false;S.settings.sources=Object.fromEntries(st.map(s=>[s.name,s]));save();showStatus(st);page=1;apply()}
+function showStatus(st){$('#srcStatus').innerHTML=st.map(s=>`<div class="status ${s.ok?'ok':'err'}"><b>${esc(s.name)}:</b> ${esc(s.msg)}</div>`).join('');renderTop()}
+$('#refresh').onclick=refresh;
+function setAuto(){clearInterval(timer);const m=+S.settings.auto;$('#auto').value=m;if(m)timer=setInterval(refresh,m*60000)}
+$('#auto').onchange=e=>{S.settings.auto=+e.target.value;save();setAuto()};
+
+/* ---------- matching (estimate only) ---------- */
+const lst=s=>s.split(',').map(x=>x.trim().toLowerCase()).filter(Boolean);
+const VOCAB=['sql','python','javascript','java','excel','power bi','tableau','salesforce','servicenow','jira','active directory','office 365','azure','aws','linux','api','power apps','power automate','zapier','airtable','crm','sap','itil','scrum'];
+function score(j){
+ const txt=((j.title||'')+' '+(j.description||'')).toLowerCase(),ttl=(j.title||'').toLowerCase(),P=S.profile;
+ const skills=lst(P.skills),titles=lst(P.titles),excl=lst(P.excludes);let sc=25;const why=[],miss=[];
+ const th=titles.filter(t=>t.split(/\s+/).filter(w=>w.length>3).every(w=>ttl.includes(w)));if(th.length){sc+=25;why.push('Title resembles a preferred role: '+th[0])}
+ const sh=skills.filter(s=>txt.includes(s));sc+=Math.min(30,sh.length*6);if(sh.length)why.push('Mentions your skills: '+sh.slice(0,5).join(', '));
+ if(/entry[- ]level|junior|trainee|associate|graduate|no experience|will train|on-the-job training|equivalent experience/.test(txt)){sc+=12;why.push('Entry-level or training language in the posting')}
+ const ex=excl.filter(e=>ttl.includes(e));if(ex.length){sc-=35;why.push('Title contains an excluded term: '+ex[0])}
+ if(/\b(5|6|7|8|10)\+? years/.test(txt)&&!/equivalent/.test(txt)){sc-=12;miss.push('Posting asks for 5+ years in a specific area')}
+ VOCAB.filter(v=>txt.includes(v)&&!skills.some(s=>s.includes(v))).slice(0,6).forEach(v=>miss.push(v));
+ const cb=/career (break|gap|re-?entry)|returnship|returning to (work|the workforce)|return[- ]to[- ]work/.exec(txt);
+ return{score:Math.max(0,Math.min(100,Math.round(sc))),why,miss,cb:cb?'Posting mentions: "'+cb[0]+'"':null}}
+
+/* ---------- filtering & rendering ---------- */
+function apply(){
+ const f=getF(),inc=lst(f.kw),exc=lst(f.ex);extLinks();
+ const popt=[...new Set(Object.values(S.jobs).map(j=>j.source))];const cur=$('#fSource').value;
+ $('#fSource').innerHTML='<option value="">All</option>'+popt.map(s=>`<option ${s===cur?'selected':''}>${esc(s)}</option>`).join('');
+ const now=Date.now();
+ results=Object.values(S.jobs).filter(j=>{const t=((j.title||'')+' '+(j.description||'')+' '+(j.company||'')).toLowerCase();
+  if(inc.length&&!inc.some(k=>t.includes(k)))return false;if(exc.some(k=>t.includes(k)))return false;
+  if(f.loc&&!/^canada$/i.test(f.loc)&&j.location&&!j.location.toLowerCase().includes(f.loc.split(',')[0].toLowerCase())&&j.workMode!=='Remote')return false;
+  if(f.co&&!(j.company||'').toLowerCase().includes(f.co.toLowerCase()))return false;
+  if(f.mode&&j.workMode!==f.mode)return false;if(f.type&&j.type!==f.type)return false;if(f.level&&j.level!==f.level)return false;if(f.source&&j.source!==f.source)return false;
+  if(f.posted&&j.posted&&now-new Date(j.posted)>f.posted*864e5)return false;
+  if(f.min&&!(j.salaryMax>=+f.min))return false;if(f.max&&j.salaryMin&&j.salaryMin>+f.max)return false;return true}).map(j=>({...j,m:score(j)}));
+ const so=f.sort;results.sort((a,b)=>so==='new'?new Date(b.posted||b.retrieved)-new Date(a.posted||a.retrieved):so==='salary'?(b.salaryMax||0)-(a.salaryMax||0):b.m.score-a.m.score);
+ renderList();renderTop()}
+function renderTop(){const t=Object.values(S.tracker);$('#stRet').textContent=Object.keys(S.jobs).length;$('#stNew').textContent=S.newIds.filter(k=>S.jobs[k]).length;$('#stSaved').textContent=t.filter(x=>x.saved).length;$('#stApp').textContent=t.filter(x=>x.status!=='Not Applied').length;
+ $('#lastRefresh').textContent=S.settings.lastRefresh?'Last successful refresh: '+fmt(S.settings.lastRefresh):'Not refreshed yet'}
+function renderList(){const L=$('#list'),sl=results.slice(0,page*20);
+ if(!results.length){L.innerHTML=Object.keys(S.jobs).length?'<div class="empty">No jobs match these filters. Loosen a filter or clear exclusions.</div>':'<div class="empty"><b>No jobs retrieved yet.</b><br>Connect a live source in Settings, then press Refresh jobs. Nothing is shown until real postings are retrieved.</div>'}
+ else L.innerHTML=sl.map(j=>`<article class="card ${S.newIds.includes(j.key)?'new':''}" data-k="${esc(j.key)}" tabindex="0"><div class="score"><b>${j.m.score}</b>estimated match</div><h3>${esc(j.title)}${S.newIds.includes(j.key)?'<span class="badge">New</span>':''}</h3><div>${esc(j.company||'Company not listed')}</div><div class="meta"><span>${esc(j.location||'Location not listed')}</span><span>${esc(j.workMode||'')}</span><span>${esc(j.salaryText||'Salary not published')}</span><span>Posted ${j.posted?fmt(j.posted):'date unknown'}</span><span>Retrieved ${fmt(j.retrieved)}</span><span>Source: ${esc(j.source)}</span></div></article>`).join('');
+ $('#more').classList.toggle('hide',results.length<=page*20)}
+$('#more').onclick=()=>{page++;renderList()};
+$('#list').addEventListener('click',e=>{const c=e.target.closest('.card');if(c)openDetail(c.dataset.k)});
+$('#list').addEventListener('keydown',e=>{if(e.key==='Enter'){const c=e.target.closest('.card');if(c)openDetail(c.dataset.k)}});
+function openDetail(k,j){j=j||results.find(x=>x.key===k)||S.tracker[k]?.job;if(!j)return;j.m=j.m||score(j);const t=S.tracker[k]||{status:'Not Applied',notes:'',appliedDate:'',saved:false};
+ $('#detail').innerHTML=`<div class="detail"><div style="display:flex;justify-content:space-between;gap:10px"><h2>${esc(j.title)}</h2><button class="sm" id="dClose">Close</button></div><div>${esc(j.company||'')} · ${esc(j.location||'')}</div>
+ <div class="meta"><span>${esc(j.type||'Type not listed')}</span><span>${esc(j.level||'Level not listed')}</span><span>${esc(j.salaryText||'Salary not published')}</span><span>Data source: ${esc(j.source)}</span><span>Verification: ${esc(j.verified||'Unverified, from the source feed')}</span></div>
+ <p class="links">${j.applyUrl?`<a href="${esc(j.applyUrl)}" target="_blank" rel="noopener noreferrer"><b>Apply</b></a>`:''}${j.url?`<a href="${esc(j.url)}" target="_blank" rel="noopener noreferrer">Original posting</a>`:''}</p>
+ <h3>Match estimate: ${j.m.score}/100</h3><div class="meta">Estimated from your saved profile, not a guarantee.</div>
+ <ul>${j.m.why.map(w=>`<li>${esc(w)}</li>`).join('')||'<li>No clear matches found in the text.</li>'}</ul>
+ <div><b>Possibly missing:</b> <span class="chips">${j.m.miss.map(m=>`<span>${esc(m)}</span>`).join('')||'None detected'}</span></div>
+ <div><b>Career-break friendliness:</b> ${esc(j.m.cb||'No evidence in this posting.')}</div>
+ <h3 style="margin-top:12px">Description</h3><pre>${esc(j.description||'No description provided by the source.')}</pre>
+ <h3 style="margin-top:12px">Tracking</h3><div class="row"><div><label for="dSt">Status</label><select id="dSt">${STATUSES.map(s=>`<option ${s===t.status?'selected':''}>${s}</option>`).join('')}</select></div><div><label for="dDt">Applied on</label><input type="date" id="dDt" value="${esc(t.appliedDate)}"></div></div>
+ <label for="dNt">Notes</label><textarea id="dNt">${esc(t.notes)}</textarea><p><button class="pri" id="dSave">${t.saved?'Update':'Save job'}</button></p></div>`;
+ $('#dClose').onclick=()=>$('#detail').innerHTML='';
+ $('#dSave').onclick=()=>{const jj={...j};delete jj.m;S.tracker[k]={status:$('#dSt').value,notes:$('#dNt').value,appliedDate:$('#dDt').value||(($('#dSt').value==='Applied')?new Date().toISOString().slice(0,10):''),saved:true,job:jj};save();renderTop();renderTracker();toast('Saved.')};
+ $('#detail').scrollIntoView({behavior:'smooth',block:'start'})}
+function renderTracker(){const e=Object.entries(S.tracker);$('#trkList').innerHTML=e.length?e.map(([k,t])=>`<article class="card" data-k="${esc(k)}" tabindex="0"><h3>${esc(t.job.title)}</h3><div>${esc(t.job.company||'')}</div><div class="meta"><span>Status: ${esc(t.status)}</span><span>Applied: ${esc(t.appliedDate||'no')}</span><span>Source: ${esc(t.job.source)}</span></div></article>`).join(''):'<div class="empty">No saved jobs yet. Open a job and choose Save job.</div>'}
+$('#trkList').addEventListener('click',e=>{const c=e.target.closest('.card');if(c){tab('results');openDetail(c.dataset.k,S.tracker[c.dataset.k].job)}});
+$('#expTrk').onclick=()=>dl('tracker.csv',csv([['Title','Company','Location','Status','Applied date','Notes','Source','Original link','Apply link'],...Object.values(S.tracker).map(t=>[t.job.title,t.job.company,t.job.location,t.status,t.appliedDate,t.notes,t.job.source,t.job.url,t.job.applyUrl])]),'text/csv');
+$('#exRes').onclick=()=>dl('results.csv',csv([['Title','Company','Location','Work arrangement','Salary','Posted','Retrieved','Source','Estimated match','Original link','Apply link'],...results.map(j=>[j.title,j.company,j.location,j.workMode,j.salaryText,j.posted,j.retrieved,j.source,j.m.score,j.url,j.applyUrl])]),'text/csv');
+
+/* ---------- tabs, profile, settings, backup ---------- */
+function tab(n){$$('#tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.t===n));['results','tracker','profile','settings'].forEach(t=>$('#t-'+t).classList.toggle('hide',t!==n));if(n==='tracker')renderTracker()}
+$('#tabs').onclick=e=>{if(e.target.dataset.t)tab(e.target.dataset.t)};
+function fillForms(){$('#pSum').value=S.profile.summary;$('#pSkills').value=S.profile.skills;$('#pTitles').value=S.profile.titles;$('#pExcl').value=S.profile.excludes;$('#sUrl').value=S.settings.workerUrl;$('#sNotif').checked=!!S.settings.notif}
+$('#pSave').onclick=()=>{Object.assign(S.profile,{summary:$('#pSum').value,skills:$('#pSkills').value,titles:$('#pTitles').value,excludes:$('#pExcl').value});save();apply();toast('Profile saved.')};
+$('#sSave').onclick=async()=>{S.settings.workerUrl=$('#sUrl').value.trim();S.settings.notif=$('#sNotif').checked;if(S.settings.notif&&'Notification' in window&&Notification.permission==='default')await Notification.requestPermission();save();toast('Settings saved.')};
+$('#bkExp').onclick=()=>dl('job-portal-backup-'+new Date().toISOString().slice(0,10)+'.json',JSON.stringify(S,null,1),'application/json');
+$('#bkImp').onclick=()=>$('#bkFile').click();
+$('#bkFile').onchange=async e=>{try{const d=JSON.parse(await e.target.files[0].text());if(!d.profile||!d.searches)throw 0;S=Object.assign(structuredClone(DEFAULTS),d);save();fillForms();renderSearches();setAuto();apply();toast('Backup restored.')}catch(x){toast('That file is not a valid backup.')}};
+
+/* ---------- start ---------- */
+fillForms();renderSearches();setAuto();renderTracker();
+if(S.activeSearch){const s=S.searches.find(x=>x.id===S.activeSearch);if(s)setF(s)}else setF({keywords:'',exclude:'',location:'Mississauga, ON',mode:'',type:'',posted:'',level:''});
+apply();
+if(S.settings.workerUrl)refresh();else showStatus([{name:'Live job sources',ok:false,msg:'Not connected. Live retrieval needs the free job proxy from Stage 2. Until then, use the LinkedIn and Job Bank search links below.'}]);
+</script>
+</body>
+</html>
